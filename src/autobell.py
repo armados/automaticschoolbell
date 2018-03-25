@@ -29,13 +29,14 @@ def bellRingNow():
     
     epalaudio.stopAllAudio()
     
-    epalaudio.play(src=bellSoundFilename, volume=100)
+    #epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
+    
     bellRing('period-2', 'end')
 
 
 def bellRing(msg1=None, msg2=None):
     logging.debug('Action: Its time to ring the bell. Start ringing...')
-    logging.debug('Message is: %s and %s' % (msg1, msg2))
+    logging.debug('Parameters are: %s and %s' % (msg1, msg2))
 
     timefilename = None
     
@@ -58,16 +59,17 @@ def bellRing(msg1=None, msg2=None):
 
     epalaudio.stopAllAudio()
 
-    epalaudio.play(src=bellSoundFilename, volume=100)
+    epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
         
     if varSayTimeBeforeAfterBell == True:
-        epalaudio.play(src=varSoundEffectAnnouncement, volume=60)
-        epalaudio.play(src=timefilename, volume=60)
+        epalaudio.addToPlayQueue(src=varSoundEffectAnnouncement, volume=60)
+        epalaudio.addToPlayQueue(src=timefilename, volume=60)
         
     if varPlayMusicAtBreak == True:
         if msg2 == "end" and msg1 in ['period-2', 'period-3','period-4', 'period-5']:
-            epalaudio.playMusicDirRandom(dir='../music2', volume=30)
+            epalaudio.playMusicDirRandom(dir='../music/dir2', volume=30)
 
+    epalaudio.playQueue()
         
         
         
@@ -86,7 +88,7 @@ def bellAutoRingDefaultSchedule():
         timeCurrentHHMM = datetime.now().strftime('%H:%M')
         timeCurrentWeekday = datetime.today().weekday()
                 
-        logging.debug('Time: %s | AutoBellMode: %s | PlayMusicAtBreak: %s' % (timeCurrentHHMM, varBellAutoMode, varPlayMusicAtBreak))
+        logging.debug('Time now is: %s | AutoBellMode: %s | PlayMusicAtBreak: %s' % (timeCurrentHHMM, varBellAutoMode, varPlayMusicAtBreak))
 
         if (varBellAutoMode == True) and (timeCurrentWeekday in schoolBellDaysList):
         
@@ -150,8 +152,8 @@ def getSayTimeBeforeAfterBell():
 def startAutoBellThread():
         
     try:
-        t = Thread(target=bellAutoRingDefaultSchedule, args=())
-        t.start()
+        autoBellThread = Thread(target=bellAutoRingDefaultSchedule, args=())
+        autoBellThread.start()
      
     except KeyboardInterrupt:
         pass

@@ -3,7 +3,6 @@ import epalaudio
 import tempfile
 import logging
 
-#import time
 
 def say(language, message):
 
@@ -11,7 +10,8 @@ def say(language, message):
 
     file = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
     
-    tts = gTTS(text=message, lang=language) # slow=True
+    tts = gTTS(text=message, lang=language)
+    
     tts.write_to_fp(file)
 
     file.close()

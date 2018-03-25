@@ -11,7 +11,6 @@ import vlc
 from vlc import EventType
 
 import logging
-
 import requests
 
 
@@ -28,6 +27,11 @@ vlcInstance = None
 player = None
 
 playerBusy = False
+
+
+queuePlayEvent = threading.Event()
+
+
 
 
 
@@ -103,7 +107,7 @@ def initEpalAudio():
     
 def findmp3files(basepath):
     
-    list = []
+    mp3list = []
     
     for root, folders, files in os.walk(basepath):
         if folders:
@@ -113,9 +117,9 @@ def findmp3files(basepath):
                 continue
             basename = os.path.basename(root)
             filepath = os.path.join(root, filename)
-            list.append(filepath)
+            mp3list.append(filepath)
             
-    return list
+    return mp3list
     
     
 def playMusicDirRandom(dir, randomplay=True, volume=100):
@@ -128,7 +132,7 @@ def playMusicDirRandom(dir, randomplay=True, volume=100):
     for filepath in list:
         logging.info("%s" % filepath)
         
-        play(filepath, volume=volume)
+        addToPlayQueue(filepath, volume=volume)
     
     
 def stopAllAudio():
@@ -171,7 +175,7 @@ def stepIncreaseVolume():
     if newVolume > 100:
         newVolume = 100
  
-    logging.info('Abjust volume from [%d] to [%d]' % (curVolume, newVolume))
+    logging.info('Change volume level from [%d] to [%d]' % (curVolume, newVolume))
  
     player.audio_set_volume(newVolume)
  
@@ -186,13 +190,13 @@ def stepDecreaseVolume():
     if newVolume < 0:
         newVolume = 0
  
-    logging.info('Abjust volume from [%d] to [%d]' % (curVolume, newVolume))
+    logging.info('Change volume level from [%d] to [%d]' % (curVolume, newVolume))
  
     player.audio_set_volume(newVolume)
    
     
     
-def play(src, volume = 100, maxtime = 0):
+def addToPlayQueue(src, volume = 100, maxtime = 0):
 
     logging.debug('Adding audio [%s] to queue with volume [%d]' % (src, volume))
 
@@ -200,6 +204,19 @@ def play(src, volume = 100, maxtime = 0):
 
     queuePlaylist.put(clip)
     
+
+    
+def playQueue():
+
+    if queuePlaylist.empty():
+        logging.info('Cannot play queue, queue is empty')
+    else:
+
+        logging.debug('Start playing queue')
+
+        queuePlayEvent.set()
+ 
+
 
 
 def MediaStateChanged(event):
@@ -230,9 +247,11 @@ def execQueueListToPlay():
         #    state = playerBell.get_state()
         #    if state not in playing:
         #        break
-        #print (playerBusy)   
+        print ("playEVENT: ", playerBusy)   
         
-        time.sleep(0.6)
+        queuePlayEvent.wait()
+        queuePlayEvent.clear()
+
         
         if not playerBusy and not queuePlaylist.empty():
             
@@ -253,11 +272,9 @@ def execQueueListToPlay():
             
             player.play()
                         
-            if clip.get('volume') != 10000:
-                #time.sleep(0.5)
-                curVolume = player.audio_get_volume()
-                logging.debug('Setting volume from [%d] to [%d]' % (curVolume, clip.get('volume')))
-                player.audio_set_volume(clip.get('volume'))
+            curVolume = player.audio_get_volume()
+            logging.debug('Setting volume from [%d] to [%d]' % (curVolume, clip.get('volume')))
+            player.audio_set_volume(clip.get('volume'))
     
 
 
@@ -270,12 +287,14 @@ def cbMediaPlayerPlaying(event):
     if maxPlayTime > 0:
         logging.debug('Setting max play time [%d] seconds' % maxPlayTime)
         thread2start.set()
+
     
 
 def cbMediaPlayerStopped(event):
     logging.debug('CB: MediaPlayerStopped')
     
     thread2stop.set()
+    queuePlayEvent.set()
 
     global playerBusy
     playerBusy = False
@@ -287,6 +306,7 @@ def cbMediaPlayerEndReached(event):
     logging.debug('CB: MediaPlayerEndReached')
     
     thread2stop.set()
+    queuePlayEvent.set()
 
     global playerBusy
     playerBusy = False
@@ -297,6 +317,7 @@ def cbMediaPlayerError(event):
     logging.debug('CB: cbMediaPlayerError detected')
     
     thread2stop.set()
+    queuePlayEvent.set()
 
     global playerBusy
     playerBusy = False
@@ -317,7 +338,7 @@ def startAudioThread():
         thread1 = Thread(target = execQueueListToPlay, args=())
         thread1.start()
      
-        thread2.start()
+        #FIXME thread2.start()
         
     except KeyboardInterrupt:
         pass

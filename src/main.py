@@ -105,7 +105,8 @@ def playSoundsNature():
         'cmdSetPlayMusicAtBreakMode': autobell.getPlayMusicAtBreak()
     }
 
-    epalaudio.play(src='../sounds/forest.mp3', volume=30)
+    epalaudio.addToPlayQueue(src='../sounds/forest.mp3', volume=30)
+    epalaudio.playQueue()
 
     return jsonify(data)
 
@@ -120,14 +121,11 @@ def playSoundsNature():
 @login_required
 def devel():
 
-    epalaudio.play(src='./sounds/mario.mp3', volume=50)
-
     textmsg='Υπάρχουν άνθρωποι που μπορούν να γεμίσουν την ψυχή σου ολοκληρωτικά χωρίς καν να σε έχουν αγγίξει. Και υπάρχουν κι αυτοί που στην αδειάζουν με ένα μονο άγγιγμα. Τάσος Λειβαδίτης. Ποιητής.'
     filename = epalspeech.say('el', textmsg)
     
-    epalaudio.play(src=filename, volume=60)
+    epalaudio.addToPlayQueue(src=filename, volume=60)
     
-
     data = {
         'status' : 'ok',
         'cmdSetTime': time.strftime("%m/%d/%Y %H:%M:%S"),
@@ -154,17 +152,21 @@ def playWebRadio(stationId):
 
     if stationId == 1:
         #epalaudio.playWebRadio('http://kissfm.live24.gr/kiss2111')
-        epalaudio.play(src='http://kissfm.live24.gr/kiss2111', volume=20)        
+        epalaudio.addToPlayQueue(src='http://kissfm.live24.gr/kiss2111', volume=20)        
+        epalaudio.playQueue()
     elif stationId == 2:
         #epalaudio.playWebRadio('http://galaxy.live24.gr:80/galaxy9292')
-        epalaudio.play(src='http://streaming.lxcluster.at:8000/live128', volume=20)
+        epalaudio.addToPlayQueue(src='http://streaming.lxcluster.at:8000/live128', volume=20)
+        epalaudio.playQueue()
     elif stationId == 3:
         #epalaudio.playWebRadio('http://109.123.116.202:8020/stream')
-        epalaudio.play(src='http://109.123.116.202:8020/stream', volume=20)
+        epalaudio.addToPlayQueue(src='http://109.123.116.202:8020/stream', volume=20)
+        epalaudio.playQueue()
 
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
 
     
@@ -176,6 +178,7 @@ def stopAllAudio():
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
 
 
@@ -187,6 +190,7 @@ def setBellAutoModeStatusOn():
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
 
     
@@ -197,6 +201,7 @@ def setBellAutoModeStatusOff():
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
 
 
@@ -208,6 +213,7 @@ def setPlayMusicAtBreakOn():
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
 
     
@@ -218,6 +224,7 @@ def setPlayMusicAtBreakOff():
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
 
     
@@ -228,6 +235,7 @@ def systemvolumesetup():
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
 
     
@@ -238,6 +246,7 @@ def systemvolumesetdown():
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
 
     
@@ -248,6 +257,7 @@ def audioqueueclear():
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
 
     
@@ -258,6 +268,7 @@ def audioqueueplaynext():
     data = {
         'status' : 'ok'
     }
+    
     return jsonify(data)
  
 
@@ -317,8 +328,10 @@ def speechText(language, textmsg):
 
     filename = epalspeech.say(language, textmsg)
     
-    epalaudio.play(src=filename, volume=60)
-            
+    epalaudio.addToPlayQueue(src=filename, volume=60)
+    epalaudio.playQueue()
+
+        
     data = {
         'status' : 'ok'
     }
@@ -336,7 +349,8 @@ def sayTime():
 
     filename = epalspeech.say(language, textmsg)
 
-    epalaudio.play(src=filename, volume=60)
+    epalaudio.addToPlayQueue(src=filename, volume=60)
+    epalaudio.playQueue()
 
     data = {
         'status' : 'ok'
@@ -356,7 +370,6 @@ if __name__ == "__main__":
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("werkzeug").setLevel(logging.WARNING)
     
-
     epalaudio.startAudioThread()
     autobell.startAutoBellThread()
         
