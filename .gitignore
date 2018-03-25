@@ -1,3 +1,10 @@
+
+music/*.mp3
+!music/bell/*.mp3
+
+
+
+
 # Backup files #
 ################
 **/*~
