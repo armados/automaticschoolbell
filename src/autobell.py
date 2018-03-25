@@ -26,13 +26,14 @@ bellSoundFilename = config.get('autobell', 'autobell_audio_file')
 
 
 def bellRingNow():
-    logging.debug('Ring now...')
+    logging.debug('Ring bell now...')
     
     epalaudio.stopAllAudio()
     
-    #epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
+    epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
+    epalaudio.playQueue()
     
-    bellRing('period-3', 'end')
+    #bellRing('period-3', 'end')
 
 
 def bellRing(msg1=None, msg2=None):
@@ -44,13 +45,16 @@ def bellRing(msg1=None, msg2=None):
     if varSayTimeBeforeAfterBell == True:
                     
         if msg2 == "start":
+            
             if msg1 == "period-1":
                 str="Η ώρα είναι " + time.strftime("%H:%M") +". Καλή σας μέρα και καλό μάθημα."                
             elif msg1 == "period-7":
                 str="Η ώρα είναι " + time.strftime("%H:%M") +". Αλλαγή διδακτικής ώρας χωρίς διάλειμμα. Καλό μάθημα."
             else:
                 str="Η ώρα είναι " + time.strftime("%H:%M") +". Καλό μάθημα."
+                
         elif msg2 == "end":
+            
             if msg1 != "period-7":
                 str="Η ώρα είναι " + time.strftime("%H:%M") +". Καλό διάλειμμα."
             else:
