@@ -1,6 +1,8 @@
+src/keys/
+src/tmp/
+src/config.ini
 
 music/*.mp3
-!music/bell/*.mp3
 
 
 
@@ -27,6 +29,7 @@ log/
 .Trashes
 ehthumbs.db
 Thumbs.db
+.directory
 
 
 # Byte-compiled / optimized / DLL files
