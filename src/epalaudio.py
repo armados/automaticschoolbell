@@ -98,26 +98,34 @@ def threadPlayMaxTime():
 
 
     
-def findmp3files(path):
+def findmp3files(path, recursive=True):
     
     mp3list = []
-    
-    for root, folders, files in os.walk(path):
-        if folders:
-            continue
-        for filename in files:
+
+    if recursive == True:
+            
+        for root, folders, files in os.walk(path):
+            for filename in files:
+                if not (filename.endswith('.mp3') or filename.endswith('.MP3')):
+                    continue
+                basename = os.path.basename(root)
+                filepath = os.path.join(root, filename)
+                mp3list.append(filepath)
+
+    else:
+        
+        for filename in os.listdir(path):
             if not (filename.endswith('.mp3') or filename.endswith('.MP3')):
                 continue
-            basename = os.path.basename(root)
-            filepath = os.path.join(root, filename)
+            filepath = os.path.join(path, filename)
             mp3list.append(filepath)
-            
+        
     return mp3list
     
     
 def playMusicDirRandom(dir, randomplay=True, volume=100):
 
-    list = findmp3files(dir)
+    list = findmp3files(dir,recursive=True)
     
     if randomplay:
         random.shuffle(list)
@@ -231,7 +239,7 @@ def execQueueListToPlay():
         queuePlayEvent.wait()
         queuePlayEvent.clear()
 
-        time.sleep(0.5)
+        time.sleep(0.7)
         
         state = player.get_state()
         
