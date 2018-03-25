@@ -17,7 +17,7 @@ varPlayMusicAtBreakDir = config.get('autobell', 'music_on_brake_directory')
 
 
 varSayTimeBeforeAfterBell = config.getboolean('autobell', 'saytime_enabled')
-varSoundEffectAnnouncement = config.get('autobell', 'saytime_audio_file')
+varSoundEffectAnnouncement = config.get('autobell', 'saytime_audio_file_intro')
 
 bellSoundFilename = config.get('autobell', 'autobell_audio_file')
 

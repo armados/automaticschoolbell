@@ -154,16 +154,16 @@ def bellringnow():
 def playWebRadio(stationId):
 
     if stationId == 1:
-        #epalaudio.playWebRadio('http://kissfm.live24.gr/kiss2111')
         epalaudio.addToPlayQueue(src='http://kissfm.live24.gr/kiss2111', volume=20)        
         epalaudio.playQueue()
     elif stationId == 2:
         #epalaudio.playWebRadio('http://galaxy.live24.gr:80/galaxy9292')
-        epalaudio.addToPlayQueue(src='http://streaming.lxcluster.at:8000/live128', volume=20)
+        #epalaudio.addToPlayQueue(src='http://streaming.lxcluster.at:8000/live128', volume=20)
+        epalaudio.addToPlayQueue(src='http://galaxy.live24.gr:80/galaxy9292', volume=20)
         epalaudio.playQueue()
     elif stationId == 3:
-        #epalaudio.playWebRadio('http://109.123.116.202:8020/stream')
-        epalaudio.addToPlayQueue(src='http://109.123.116.202:8020/stream', volume=20)
+        #epalaudio.addToPlayQueue(src='http://109.123.116.202:8020/stream', volume=20)
+        epalaudio.addToPlayQueue(src='dfgream.mp3', volume=20)
         epalaudio.playQueue()
 
     data = {

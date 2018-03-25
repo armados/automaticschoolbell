@@ -18,20 +18,7 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 
-
-queuePlaylist = None
-
-vlcInstance = None
-
-player = None
-
 playerBusy = False
-
-
-queuePlayEvent = threading.Event()
-
-
-
 
 
 class State:
@@ -40,33 +27,22 @@ class State:
     STOPPED = 3
 
 
-thread2 = None
-thread2start = None
-thread2stop = None
 maxPlayTime = 0
 
 
 
+queuePlaylist = queue.Queue()
 
+#define VLC instance
+vlcInstance = vlc.Instance('--no-xlib --avcodec-threads=0') #--quiet --verbose 3
 
- 
-def initEpalAudio():
+#Define VLC player
+player = vlcInstance.media_player_new()
 
-    global queuePlaylist
-    queuePlaylist = queue.Queue()
-
-    global vlcInstance
-    vlcInstance = vlc.Instance('--no-xlib --avcodec-threads=0') #--quiet 
+thread2start = threading.Event()
+thread2stop = threading.Event()
     
-    global player
-    player = vlcInstance.media_player_new()
-    
-    global thread2start
-    thread2start = threading.Event()
-    
-    global thread2stop
-    thread2stop = threading.Event()
-    
+queuePlayEvent = threading.Event()
 
 
 
@@ -123,6 +99,7 @@ def findmp3files(path, recursive=True):
     return mp3list
     
     
+    
 def playMusicDirRandom(dir, randomplay=True, volume=100):
 
     list = findmp3files(dir,recursive=True)
@@ -137,7 +114,7 @@ def playMusicDirRandom(dir, randomplay=True, volume=100):
     
     
 def stopAllAudio():
-    logging.info('Stop all audio and clear media queue')
+    logging.info('Stop player and clear media queue')
     
     audioQueueClear()
     
@@ -167,7 +144,6 @@ def audioQueuePlayNext():
 
 
 def stepIncreaseVolume():
-    logging.info('Increase volume')
  
     curVolume = player.audio_get_volume()
     
@@ -176,13 +152,12 @@ def stepIncreaseVolume():
     if newVolume > 100:
         newVolume = 100
  
-    logging.info('Change volume level from [%d] to [%d]' % (curVolume, newVolume))
+    logging.info('Increase volume level from [%d] to [%d]' % (curVolume, newVolume))
  
     player.audio_set_volume(newVolume)
  
 
 def stepDecreaseVolume():
-    logging.info('Decrease volume')
  
     curVolume = player.audio_get_volume()
     
@@ -191,7 +166,7 @@ def stepDecreaseVolume():
     if newVolume < 0:
         newVolume = 0
  
-    logging.info('Change volume level from [%d] to [%d]' % (curVolume, newVolume))
+    logging.info('Decrease volume level from [%d] to [%d]' % (curVolume, newVolume))
  
     player.audio_set_volume(newVolume)
    
@@ -249,23 +224,36 @@ def execQueueListToPlay():
 
             clip = queuePlaylist.get()
             
-            media = vlcInstance.media_new(clip.get('src'), "no-video")
+            media = vlcInstance.media_new(clip.get('src'))
             media.get_mrl()
             media.parse()
-
+                             
             player.set_media(media)
+            
+            player.play()
+                                                            
+            logging.debug('Now playing audio [%s]'  % clip.get('src'))
+
+            if media.get_duration() == -1:
+                logging.debug('Media duration: [unknown]')
+            else:
+                seconds = media.get_duration() / 1000
+                m, s = divmod(seconds, 60)
+                h, m = divmod(m, 60)
+                logging.debug('Media duration: [%d:%02d:%02d]' % (h, m, s))
+            
+            # required to set player volume
+            time.sleep(0.07)
+            
+            logging.debug('Setting volume to [%d]' % clip.get('volume'))
+            player.audio_set_volume(clip.get('volume'))
             
             global maxPlayTime
             maxPlayTime = clip.get('maxtime')
-                                    
-            logging.debug('Now playing audio [%s]'  % clip.get('src'))
             
-            player.play()
-                        
-            curVolume = player.audio_get_volume()
-            #logging.debug('Setting volume from [%d] to [%d]' % (curVolume, clip.get('volume')))
-            player.audio_set_volume(clip.get('volume'))
-    
+            if maxPlayTime > 0:
+                logging.debug('Setting max play time [%d] seconds' % maxPlayTime)
+                thread2start.set()
 
 
 def cbMediaPlayerPlaying(event):
@@ -273,10 +261,6 @@ def cbMediaPlayerPlaying(event):
     
     global playerBusy
     playerBusy = True
-    
-    if maxPlayTime > 0:
-        logging.debug('Setting max play time [%d] seconds' % maxPlayTime)
-        thread2start.set()
     
 
 def cbMediaPlayerStopped(event):
@@ -311,8 +295,6 @@ def cbMediaPlayerError(event):
    
     
 def startAudioThread():
- 
-    initEpalAudio()
 
     event_manager = player.event_manager()
     
