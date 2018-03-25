@@ -6,15 +6,15 @@ import logging
 
 def say(language, message):
 
-    logging.info('Say message [%s]' % message)
+    logging.info('Generate TTS audio file with text [%s]' % message)
 
-    file = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
+    tmpfile = tempfile.NamedTemporaryFile(suffix='.mp3', delete=False)
     
     tts = gTTS(text=message, lang=language)
     
-    tts.write_to_fp(file)
+    tts.write_to_fp(tmpfile)
 
-    file.close()
+    tmpfile.close()
     
-    return file.name
+    return tmpfile.name
 
