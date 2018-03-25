@@ -2,10 +2,10 @@ src/keys/
 src/tmp/
 
 log/
-music/
-sounds/
-!sounds/bell/
 
+music/dir1/
+music/dir2/
+music/private/
 
 
 # Backup files #
