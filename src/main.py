@@ -369,6 +369,7 @@ if __name__ == "__main__":
     
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("werkzeug").setLevel(logging.WARNING)
+    logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
     
     epalaudio.startAudioThread()
     autobell.startAutoBellThread()

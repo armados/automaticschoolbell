@@ -49,19 +49,17 @@ maxPlayTime = 0
 ueueCurMediaPlay = None
 
 
-def threadPlayMaxTime(start_event, stop_event):
+def threadPlayMaxTime():
     global maxPlayTime
     global thread2stop
     global thread2start
     
     while True:
         
-        #start_event.wait()
         thread2start.clear()
         thread2start.wait()
-        print ("maxtime startted now | max time: %d" % maxPlayTime)
+        #print ("maxtime startted now | max time: %d" % maxPlayTime)
         thread2start.clear()
-        #start_event.clear()
         
         countsec = 0
         thread2stop.clear()
@@ -71,14 +69,11 @@ def threadPlayMaxTime(start_event, stop_event):
             if countsec >= maxPlayTime:
                 maxPlayTime = 0
                 player.stop()
-                #stop_event.set()
                 thread2stop.set()
               
-            #stop_event.wait(1)
             thread2stop.wait(1)
             countsec = countsec + 1
 
-        print ("end of max thread | max time: %d" % maxPlayTime)
 
 
  
@@ -88,7 +83,7 @@ def initEpalAudio():
     queuePlaylist = queue.Queue()
 
     global vlcInstance
-    vlcInstance = vlc.Instance('--no-video')
+    vlcInstance = vlc.Instance('--no-xlib --avcodec-threads=0') #--quiet 
     
     global player
     player = vlcInstance.media_player_new()
@@ -101,15 +96,15 @@ def initEpalAudio():
     thread2stop = threading.Event()
     
     global thread2
-    thread2 = threading.Thread(target=threadPlayMaxTime, args=(thread2start, thread2stop))
+    thread2 = threading.Thread(target=threadPlayMaxTime, args=())
 
 
     
-def findmp3files(basepath):
+def findmp3files(path):
     
     mp3list = []
     
-    for root, folders, files in os.walk(basepath):
+    for root, folders, files in os.walk(path):
         if folders:
             continue
         for filename in files:
@@ -130,9 +125,9 @@ def playMusicDirRandom(dir, randomplay=True, volume=100):
         random.shuffle(list)
         
     for filepath in list:
-        logging.info("%s" % filepath)
-        
         addToPlayQueue(filepath, volume=volume)
+        #logging.info("Audio clip in list [%s]" % filepath)
+        
     
     
 def stopAllAudio():
@@ -198,7 +193,7 @@ def stepDecreaseVolume():
     
 def addToPlayQueue(src, volume = 100, maxtime = 0):
 
-    logging.debug('Adding audio [%s] to queue with volume [%d]' % (src, volume))
+    logging.debug('Added audio [%s] to queue with volume [%d]' % (src, volume))
 
     clip = dict(src=src, volume=volume, maxtime=maxtime)    
 
@@ -212,32 +207,17 @@ def playQueue():
         logging.info('Cannot play queue, queue is empty')
     else:
 
-        logging.debug('Start playing queue')
+        logging.debug('Playing queue now')
 
         queuePlayEvent.set()
  
 
 
-
-def MediaStateChanged(event):
-    global playerBusy
-    
-    playing = set([State.PAUSED, State.PLAYING, State.STOPPED])
-
-    state = player.get_state()
-
-    logging.debug('Callback VLC: state %s ' % state)
-    
-    #if state in playing:
-    #    playerBusy = True
-    #else:
-    #    playerBusy = False
-
     
 def execQueueListToPlay():
     global playerBusy
 
-    #playing = set([1,2,3,4])
+    playing = set([1,2,3,4])
     #playing = set([State.PAUSED, State.PLAYING, State.STOPPED])
 
     while True:
@@ -247,19 +227,23 @@ def execQueueListToPlay():
         #    state = playerBell.get_state()
         #    if state not in playing:
         #        break
-        print ("playEVENT: ", playerBusy)   
+        
+        #logging.debug('playEVENT: [%s]' % playerBusy)   
         
         queuePlayEvent.wait()
         queuePlayEvent.clear()
 
+        time.sleep(0.5)
         
-        if not playerBusy and not queuePlaylist.empty():
+        state = player.get_state()
+        
+        if (state not in playing) and (not queuePlaylist.empty()):
             
             playerBusy = True
 
             clip = queuePlaylist.get()
             
-            media = vlcInstance.media_new(clip.get('src'))
+            media = vlcInstance.media_new(clip.get('src'), "no-video")
             media.get_mrl()
             media.parse()
 
@@ -268,18 +252,18 @@ def execQueueListToPlay():
             global maxPlayTime
             maxPlayTime = clip.get('maxtime')
                                     
-            logging.debug('Starting to play audio [%s]'  % clip.get('src'))
+            logging.debug('Now playing audio [%s]'  % clip.get('src'))
             
             player.play()
                         
             curVolume = player.audio_get_volume()
-            logging.debug('Setting volume from [%d] to [%d]' % (curVolume, clip.get('volume')))
+            #logging.debug('Setting volume from [%d] to [%d]' % (curVolume, clip.get('volume')))
             player.audio_set_volume(clip.get('volume'))
     
 
 
 def cbMediaPlayerPlaying(event):
-    logging.debug('CB: MediaPlayerPlaying')
+    #logging.debug('CB: MediaPlayerPlaying')
     
     global playerBusy
     playerBusy = True
@@ -287,34 +271,30 @@ def cbMediaPlayerPlaying(event):
     if maxPlayTime > 0:
         logging.debug('Setting max play time [%d] seconds' % maxPlayTime)
         thread2start.set()
-
     
 
 def cbMediaPlayerStopped(event):
-    logging.debug('CB: MediaPlayerStopped')
+    #logging.debug('CB: MediaPlayerStopped')
     
     thread2stop.set()
     queuePlayEvent.set()
 
     global playerBusy
     playerBusy = False
-    
-
     
 
 def cbMediaPlayerEndReached(event):
-    logging.debug('CB: MediaPlayerEndReached')
+    #logging.debug('CB: MediaPlayerEndReached')
     
     thread2stop.set()
     queuePlayEvent.set()
 
     global playerBusy
     playerBusy = False
-    
     
 
 def cbMediaPlayerError(event):
-    logging.debug('CB: cbMediaPlayerError detected')
+    #logging.debug('CB: cbMediaPlayerError detected')
     
     thread2stop.set()
     queuePlayEvent.set()
@@ -322,6 +302,7 @@ def cbMediaPlayerError(event):
     global playerBusy
     playerBusy = False
 
+   
     
 def startAudioThread():
  
@@ -329,16 +310,16 @@ def startAudioThread():
 
     event_manager = player.event_manager()
     
-    event_manager.event_attach(EventType.MediaPlayerEndReached, cbMediaPlayerEndReached)    
-    event_manager.event_attach(EventType.MediaPlayerStopped, cbMediaPlayerStopped)    
     event_manager.event_attach(EventType.MediaPlayerPlaying, cbMediaPlayerPlaying)    
+    event_manager.event_attach(EventType.MediaPlayerStopped, cbMediaPlayerStopped)    
+    event_manager.event_attach(EventType.MediaPlayerEndReached, cbMediaPlayerEndReached)    
     event_manager.event_attach(EventType.MediaPlayerEncounteredError , cbMediaPlayerError)    
     
     try:
         thread1 = Thread(target = execQueueListToPlay, args=())
         thread1.start()
      
-        #FIXME thread2.start()
+        thread2.start()
         
     except KeyboardInterrupt:
         pass

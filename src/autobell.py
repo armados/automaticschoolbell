@@ -31,7 +31,7 @@ def bellRingNow():
     
     #epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
     
-    bellRing('period-2', 'end')
+    bellRing('period-3', 'end')
 
 
 def bellRing(msg1=None, msg2=None):
@@ -60,7 +60,9 @@ def bellRing(msg1=None, msg2=None):
     epalaudio.stopAllAudio()
 
     epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
-        
+      
+    epalaudio.addToPlayQueue(src='http://109.123.116.202:8020/stream', volume=80, maxtime=10)
+                             
     if varSayTimeBeforeAfterBell == True:
         epalaudio.addToPlayQueue(src=varSoundEffectAnnouncement, volume=60)
         epalaudio.addToPlayQueue(src=timefilename, volume=60)
@@ -77,7 +79,7 @@ def bellRing(msg1=None, msg2=None):
 
 def bellAutoRingDefaultSchedule():
         
-    schoolBellDaysList = (0,1,2,3,4)
+    schoolDaysList = (0,1,2,3,4)
     
     while True:
         # sleep until the next minute
@@ -90,7 +92,7 @@ def bellAutoRingDefaultSchedule():
                 
         logging.debug('Time now is: %s | AutoBellMode: %s | PlayMusicAtBreak: %s' % (timeCurrentHHMM, varBellAutoMode, varPlayMusicAtBreak))
 
-        if (varBellAutoMode == True) and (timeCurrentWeekday in schoolBellDaysList):
+        if (varBellAutoMode == True) and (timeCurrentWeekday in schoolDaysList):
         
             if   (timeCurrentHHMM == '08:30'):
                 bellRing('period-1', 'start')
