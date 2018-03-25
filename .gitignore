@@ -2,8 +2,9 @@ src/keys/
 src/tmp/
 src/config.ini
 
-music/*.mp3
-
+music/
+sounds/
+!sounds/bell/
 
 
 
