@@ -22,6 +22,16 @@ varSoundEffectAnnouncement = config.get('autobell', 'saytime_audio_file')
 bellSoundFilename = config.get('autobell', 'autobell_audio_file')
 
 
+class weekday:
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    Thursday = 3 
+    FRIDAY = 4
+    SATURDAY = 5
+    SUNDAY = 6
+
+
 
 
 
@@ -82,7 +92,10 @@ def bellRing(msg1=None, msg2=None):
 
 def bellAutoRingDefaultSchedule():
         
-    schoolDaysList = (0,1,2,3,4)
+    #schoolDaysList = (0,1,2,3,4)
+    
+    schoolDaysList = (weekday.MONDAY, weekday.TUESDAY, weekday.WEDNESDAY, weekday.Thursday, weekday.FRIDAY)
+
     
     while True:
         # sleep until the next minute

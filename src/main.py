@@ -26,9 +26,12 @@ app.config['UPLOAD_FOLDER'] = config.get('flask', 'upload_dir')
 
 #  return jsonify({'error': 'no file'}), 400
 
+
+
 USER_DATA = {
-    "armados": "12345678"
+    "admin": "12345678"
 }
+
 
 
        
@@ -105,7 +108,7 @@ def playSoundsNature():
         'cmdSetPlayMusicAtBreakMode': autobell.getPlayMusicAtBreak()
     }
 
-    epalaudio.addToPlayQueue(src='../sounds/forest.mp3', volume=30)
+    epalaudio.addToPlayQueue(src='../music/forest.mp3', volume=30)
     epalaudio.playQueue()
 
     return jsonify(data)
