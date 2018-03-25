@@ -17,7 +17,6 @@ import requests
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-varInitialVolume = config.getint('epalaudio', 'initial_volume')
 
 
 queuePlaylist = None
@@ -46,7 +45,30 @@ thread2start = None
 thread2stop = None
 maxPlayTime = 0
 
-ueueCurMediaPlay = None
+
+
+
+
+ 
+def initEpalAudio():
+
+    global queuePlaylist
+    queuePlaylist = queue.Queue()
+
+    global vlcInstance
+    vlcInstance = vlc.Instance('--no-xlib --avcodec-threads=0') #--quiet 
+    
+    global player
+    player = vlcInstance.media_player_new()
+    
+    global thread2start
+    thread2start = threading.Event()
+    
+    global thread2stop
+    thread2stop = threading.Event()
+    
+
+
 
 
 def threadPlayMaxTime():
@@ -73,30 +95,6 @@ def threadPlayMaxTime():
               
             thread2stop.wait(1)
             countsec = countsec + 1
-
-
-
- 
-def initEpalAudio():
-
-    global queuePlaylist
-    queuePlaylist = queue.Queue()
-
-    global vlcInstance
-    vlcInstance = vlc.Instance('--no-xlib --avcodec-threads=0') #--quiet 
-    
-    global player
-    player = vlcInstance.media_player_new()
-    player.audio_set_volume(varInitialVolume)
-    
-    global thread2start
-    thread2start = threading.Event()
-    
-    global thread2stop
-    thread2stop = threading.Event()
-    
-    global thread2
-    thread2 = threading.Thread(target=threadPlayMaxTime, args=())
 
 
     
@@ -319,6 +317,7 @@ def startAudioThread():
         thread1 = Thread(target = execQueueListToPlay, args=())
         thread1.start()
      
+        thread2 = threading.Thread(target=threadPlayMaxTime, args=())
         thread2.start()
         
     except KeyboardInterrupt:

@@ -13,9 +13,10 @@ config.read('config.ini')
 
 varBellAutoMode = config.getboolean('autobell', 'autobell_enabled')
 varPlayMusicAtBreak = config.getboolean('autobell', 'music_on_brake')
+varPlayMusicAtBreakDir = config.get('autobell', 'music_on_brake_directory')
+
 
 varSayTimeBeforeAfterBell = config.getboolean('autobell', 'saytime_enabled')
-
 varSoundEffectAnnouncement = config.get('autobell', 'saytime_audio_file')
 
 bellSoundFilename = config.get('autobell', 'autobell_audio_file')
@@ -61,15 +62,13 @@ def bellRing(msg1=None, msg2=None):
 
     epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
       
-    epalaudio.addToPlayQueue(src='http://109.123.116.202:8020/stream', volume=80, maxtime=10)
-                             
     if varSayTimeBeforeAfterBell == True:
-        epalaudio.addToPlayQueue(src=varSoundEffectAnnouncement, volume=60)
+        epalaudio.addToPlayQueue(src=varSoundEffectAnnouncement, volume=50)
         epalaudio.addToPlayQueue(src=timefilename, volume=60)
         
     if varPlayMusicAtBreak == True:
         if msg2 == "end" and msg1 in ['period-2', 'period-3','period-4', 'period-5']:
-            epalaudio.playMusicDirRandom(dir='../music/dir2', volume=30)
+            epalaudio.playMusicDirRandom(dir=varPlayMusicAtBreakDir, volume=30)
 
     epalaudio.playQueue()
         
