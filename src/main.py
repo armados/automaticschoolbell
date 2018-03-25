@@ -376,8 +376,10 @@ if __name__ == "__main__":
         
     cfgHttpdPort = config.getint('httpd', 'port')
 
-    if config.getboolean('httpd', 'use_ssl_connection'):
-        app.run(host='0.0.0.0',port=cfgHttpdPort, debug = False, ssl_context = ('keys/ssl.cert', 'keys/ssl.key'))
+    if config.getboolean('httpd', 'ssl_connection_enabled'):
+        sslFileCert = config.get('httpd', 'ssl_file_cert')
+        sslFileKey = config.get('httpd', 'ssl_file_key')
+        app.run(host='0.0.0.0',port=cfgHttpdPort, debug = False, ssl_context = (sslFileCert, sslFileKey))
     else:
         app.run(host='0.0.0.0',port=cfgHttpdPort, debug = False)
 
