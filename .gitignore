@@ -1,7 +1,7 @@
 src/keys/
 src/tmp/
-src/config.ini
 
+log/
 music/
 sounds/
 !sounds/bell/
@@ -15,10 +15,9 @@ sounds/
 **/*.sw[abcdefghijklmnop]
 
 
-# Logs and databases #
-######################
-log/
-*.log
+# Logs #
+########
+**/*.log
 
 
 # OS generated files #
@@ -46,5 +45,3 @@ instance/
 # pyenv
 .python-version
 
-# mypy
-.mypy_cache/
