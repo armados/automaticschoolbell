@@ -34,7 +34,7 @@ maxPlayTime = 0
 queuePlaylist = queue.Queue()
 
 #define VLC instance
-vlcInstance = vlc.Instance('--no-xlib --avcodec-threads=0') #--quiet --verbose 3
+vlcInstance = vlc.Instance('--no-xlib') #--quiet --verbose 3
 
 #Define VLC player
 player = vlcInstance.media_player_new()
@@ -209,10 +209,11 @@ def execQueueListToPlay():
         #    if state not in playing:
         #        break
         
-        #logging.debug('playEVENT: [%s]' % playerBusy)   
         
         queuePlayEvent.wait()
         queuePlayEvent.clear()
+
+        logging.debug('execQueueListToPlay() received ThreadEvent to play queue')
 
         time.sleep(0.7)
         

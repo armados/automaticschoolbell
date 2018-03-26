@@ -366,8 +366,22 @@ def sayTime():
     
  
 if __name__ == "__main__":
-    
+
     logging.basicConfig(level=logging.DEBUG)
+
+    logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
+    rootLogger = logging.getLogger()
+
+    fileHandler = logging.FileHandler("{0}/{1}.log".format('log', 'devel'))
+    fileHandler.setFormatter(logFormatter)
+    rootLogger.addHandler(fileHandler)
+
+    consoleHandler = logging.StreamHandler()
+    consoleHandler.setFormatter(logFormatter)
+    rootLogger.addHandler(consoleHandler)
+
+    
+    #logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger(__name__)
     
     logging.getLogger("requests").setLevel(logging.WARNING)
