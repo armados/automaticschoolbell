@@ -38,6 +38,7 @@ vlcInstance = vlc.Instance('--no-xlib') #--quiet --verbose 3
 
 #Define VLC player
 player = vlcInstance.media_player_new()
+player.stop()
 
 thread2start = threading.Event()
 thread2stop = threading.Event()

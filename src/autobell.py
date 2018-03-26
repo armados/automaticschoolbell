@@ -26,7 +26,7 @@ class weekday:
     MONDAY = 0
     TUESDAY = 1
     WEDNESDAY = 2
-    Thursday = 3 
+    THURSDAY = 3 
     FRIDAY = 4
     SATURDAY = 5
     SUNDAY = 6
@@ -77,8 +77,8 @@ def bellRing(msg1=None, msg2=None):
     epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
       
     if varSayTimeBeforeAfterBell == True:
-        epalaudio.addToPlayQueue(src=varSoundEffectAnnouncement, volume=50)
-        epalaudio.addToPlayQueue(src=timefilename, volume=60)
+        epalaudio.addToPlayQueue(src=varSoundEffectAnnouncement, volume=40)
+        epalaudio.addToPlayQueue(src=timefilename, volume=50)
         
     if varPlayMusicAtBreak == True:
         if msg2 == "end" and msg1 in ['period-2', 'period-3','period-4', 'period-5']:
@@ -94,7 +94,7 @@ def bellAutoRingDefaultSchedule():
         
     #schoolDaysList = (0,1,2,3,4)
     
-    schoolDaysList = (weekday.MONDAY, weekday.TUESDAY, weekday.WEDNESDAY, weekday.Thursday, weekday.FRIDAY)
+    schoolDaysList = (weekday.MONDAY, weekday.TUESDAY, weekday.WEDNESDAY, weekday.THURSDAY, weekday.FRIDAY)
 
     
     while True:
@@ -102,6 +102,9 @@ def bellAutoRingDefaultSchedule():
         t = datetime.now()
         sleeptime = 60 - (t.second + t.microsecond/1000000.0)
         time.sleep(sleeptime)
+
+        if varBellAutoMode == False:
+            continue
 
         timeCurrentHHMM = datetime.now().strftime('%H:%M')
         timeCurrentWeekday = datetime.today().weekday()
