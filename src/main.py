@@ -128,7 +128,8 @@ def devel():
     filename = epalspeech.say('el', textmsg)
     
     epalaudio.addToPlayQueue(src=filename, volume=60)
-    
+    epalaudio.playQueue()
+
     data = {
         'status' : 'ok',
         'cmdSetTime': time.strftime("%m/%d/%Y %H:%M:%S"),
