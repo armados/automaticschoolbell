@@ -38,7 +38,7 @@ vlcInstance = vlc.Instance('--no-xlib') #--quiet --verbose 3
 
 #Define VLC player
 player = vlcInstance.media_player_new()
-player.stop()
+#player.stop()
 
 thread2start = threading.Event()
 thread2stop = threading.Event()
@@ -216,7 +216,7 @@ def execQueueListToPlay():
 
         logging.debug('execQueueListToPlay() received ThreadEvent to play queue')
 
-        time.sleep(0.7)
+        time.sleep(0.2)
         
         state = player.get_state()
         
@@ -245,11 +245,15 @@ def execQueueListToPlay():
                 logging.debug('Media duration: [%d:%02d:%02d]' % (h, m, s))
             
             # required to set player volume
-            time.sleep(0.07)
+            # time.sleep(0.1)
             
-            logging.debug('Setting volume to [%d]' % clip.get('volume'))
-            player.audio_set_volume(clip.get('volume'))
+            #logging.debug('Setting volume to [%d]' % clip.get('volume'))
             
+            while player.get_state() in playing and player.audio_get_volume() != clip.get('volume'):
+                player.audio_set_volume(clip.get('volume'))
+            logging.debug('Volume has been set to [%d]' % clip.get('volume'))
+
+
             global maxPlayTime
             maxPlayTime = clip.get('maxtime')
             
