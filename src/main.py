@@ -18,11 +18,15 @@ from pprint import pprint
 
 from werkzeug.utils import secure_filename
 
+#from api.v1 import api as api_v1
+
 config = configparser.ConfigParser()
 config.read('config.ini')
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = config.get('flask', 'upload_dir')
+
+#app.register_blueprint(api_v1, url_prefix='/v1')
 
 #  return jsonify({'error': 'no file'}), 400
 
