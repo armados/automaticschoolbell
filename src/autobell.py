@@ -84,7 +84,7 @@ def bellRing(msg1=None, msg2=None):
     if msg2 == "end" and msg1 in ['period-2', 'period-3','period-4']:
         quote = epalquotes.getRandomQuote()
         quotefile = epalspeech.say('el', "Αποφθέγματα και στίχοι Ελλήνων συγγραφέων και ποιητών. " + quote)
-        epalaudio.addToPlayQueue(src=quotefile, volume=34)
+        epalaudio.addToPlayQueue(src=quotefile, volume=35)
     
     if varPlayMusicAtBreak == True:
         if msg2 == "end" and msg1 in ['period-2', 'period-3','period-4', 'period-5']:

@@ -214,7 +214,7 @@ def execQueueListToPlay():
         queuePlayEvent.wait()
         queuePlayEvent.clear()
 
-        logging.debug('execQueueListToPlay() received ThreadEvent to play queue')
+        #logging.debug('execQueueListToPlay() received ThreadEvent to play queue')
 
         time.sleep(0.2)
         
@@ -251,6 +251,7 @@ def execQueueListToPlay():
             
             while player.get_state() in playing and player.audio_get_volume() != clip.get('volume'):
                 player.audio_set_volume(clip.get('volume'))
+            player.audio_set_volume(clip.get('volume'))
             logging.debug('Volume has been set to [%d]' % clip.get('volume'))
 
 
