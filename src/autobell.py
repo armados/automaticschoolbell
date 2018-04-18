@@ -41,10 +41,10 @@ def bellRingNow():
     
     epalaudio.stopAllAudio()
     
-    #epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
-    #epalaudio.playQueue()
+    epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
+    epalaudio.playQueue()
     
-    bellRing('period-3', 'end')
+    #bellRing('period-3', 'end')
 
 
 def bellRing(msg1=None, msg2=None):
