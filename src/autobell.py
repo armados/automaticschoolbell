@@ -6,6 +6,7 @@ import configparser
 
 import epalaudio
 import epalspeech
+import epalquotes
 
 
 config = configparser.ConfigParser()
@@ -40,10 +41,10 @@ def bellRingNow():
     
     epalaudio.stopAllAudio()
     
-    epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
-    epalaudio.playQueue()
+    #epalaudio.addToPlayQueue(src=bellSoundFilename, volume=100)
+    #epalaudio.playQueue()
     
-    #bellRing('period-3', 'end')
+    bellRing('period-3', 'end')
 
 
 def bellRing(msg1=None, msg2=None):
@@ -78,8 +79,13 @@ def bellRing(msg1=None, msg2=None):
       
     if varSayTimeBeforeAfterBell == True:
         epalaudio.addToPlayQueue(src=varSoundEffectAnnouncement, volume=40)
-        epalaudio.addToPlayQueue(src=timefilename, volume=50)
+        epalaudio.addToPlayQueue(src=timefilename, volume=35)
         
+    if msg2 == "end" and msg1 in ['period-2', 'period-3','period-4']:
+        quote = epalquotes.getRandomQuote()
+        quotefile = epalspeech.say('el', "Αποφθέγματα και στίχοι Ελλήνων συγγραφέων και ποιητών. " + quote)
+        epalaudio.addToPlayQueue(src=quotefile, volume=34)
+    
     if varPlayMusicAtBreak == True:
         if msg2 == "end" and msg1 in ['period-2', 'period-3','period-4', 'period-5']:
             epalaudio.playMusicDirRandom(dir=varPlayMusicAtBreakDir, volume=30)

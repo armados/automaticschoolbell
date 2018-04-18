@@ -30,5 +30,3 @@ def getRandomQuote():
 
     return random.choice(quotes)
 
-
-print (getRandomQuote())
