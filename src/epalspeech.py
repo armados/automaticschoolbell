@@ -1,5 +1,4 @@
 from gtts import gTTS
-import epalaudio
 import tempfile
 import logging
 
