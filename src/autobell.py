@@ -75,7 +75,7 @@ def bellRing(msg1=None, msg2=None):
             if msg1 != "period-7":
                 str="Η ώρα είναι " + time.strftime("%H:%M") +". Καλό διάλειμμα."
             else:
-                str="Η ώρα είναι " + time.strftime("%H:%M") +". Τέλος μαθημάτων. Σας εύχομαι καλό μεσημέρι και καλό διάβασμα."
+                str="Η ώρα είναι " + time.strftime("%H:%M") +". Τέλος μαθημάτων. Σας εύχομαι καλό μεσημέρι και καλό διάβασμα. Θα μου λείψετε!"
         
         timefilename = epalspeech.createAudioFileFromText('el', str)
 
