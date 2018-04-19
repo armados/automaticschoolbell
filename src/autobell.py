@@ -35,6 +35,12 @@ class weekday:
 
 
 
+def test1():
+    logging.debug('Test1')
+        
+    bellRing('period-3', 'end')
+
+
 
 def bellRingNow():
     logging.debug('Ring bell now...')
@@ -71,7 +77,7 @@ def bellRing(msg1=None, msg2=None):
             else:
                 str="Η ώρα είναι " + time.strftime("%H:%M") +". Τέλος μαθημάτων. Σας εύχομαι καλό μεσημέρι και καλό διάβασμα."
         
-        timefilename = epalspeech.say('el', str)
+        timefilename = epalspeech.createAudioFileFromText('el', str)
 
     epalaudio.stopAllAudio()
 
@@ -83,11 +89,13 @@ def bellRing(msg1=None, msg2=None):
         
     if msg2 == "end" and msg1 in ['period-2', 'period-3','period-4']:
         quote = epalquotes.getRandomQuote()
-        quotefile = epalspeech.say('el', "Αποφθέγματα και στίχοι Ελλήνων συγγραφέων και ποιητών. " + quote)
+        quotefile = epalspeech.createAudioFileFromText('el', "Αποφθέγματα και στίχοι Ελλήνων συγγραφέων και ποιητών. " + quote)
         epalaudio.addToPlayQueue(src=quotefile, volume=35)
     
     if varPlayMusicAtBreak == True:
         if msg2 == "end" and msg1 in ['period-2', 'period-3','period-4', 'period-5']:
+            introfile = epalspeech.createAudioFileFromText('el', "Μουσική απόδραση. Καλή ακρόαση.")
+            epalaudio.addToPlayQueue(src=introfile, volume=35)
             epalaudio.playMusicDirRandom(dir=varPlayMusicAtBreakDir, volume=30)
 
     epalaudio.playQueue()
@@ -97,9 +105,7 @@ def bellRing(msg1=None, msg2=None):
         
 
 def bellAutoRingDefaultSchedule():
-        
-    #schoolDaysList = (0,1,2,3,4)
-    
+            
     schoolDaysList = (weekday.MONDAY, weekday.TUESDAY, weekday.WEDNESDAY, weekday.THURSDAY, weekday.FRIDAY)
 
     

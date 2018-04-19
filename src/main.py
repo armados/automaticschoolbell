@@ -126,13 +126,9 @@ def playSoundsNature():
 
 @app.route("/devel", methods=['POST'])
 @login_required
-def devel():
+def test1():
 
-    textmsg='Υπάρχουν άνθρωποι που μπορούν να γεμίσουν την ψυχή σου ολοκληρωτικά χωρίς καν να σε έχουν αγγίξει. Και υπάρχουν κι αυτοί που στην αδειάζουν με ένα μονο άγγιγμα. Τάσος Λειβαδίτης. Ποιητής.'
-    filename = epalspeech.say('el', textmsg)
-    
-    epalaudio.addToPlayQueue(src=filename, volume=60)
-    epalaudio.playQueue()
+    autobell.test1()
 
     data = {
         'status' : 'ok',
@@ -334,7 +330,7 @@ def upload_file():
 @login_required
 def speechText(language, textmsg):
 
-    filename = epalspeech.say(language, textmsg)
+    filename = epalspeech.createAudioFileFromText(language, textmsg)
     
     epalaudio.addToPlayQueue(src=filename, volume=60)
     epalaudio.playQueue()
@@ -355,7 +351,7 @@ def sayTime():
     language = 'el'
     textmsg = "Η ώρα είναι " + time.strftime("%H:%M")
 
-    filename = epalspeech.say(language, textmsg)
+    filename = epalspeech.createAudioFileFromText(language, textmsg)
 
     epalaudio.addToPlayQueue(src=filename, volume=60)
     epalaudio.playQueue()

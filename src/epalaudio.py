@@ -26,6 +26,8 @@ class State:
     PAUSED = 2
     STOPPED = 3
 
+playing = set([1,2,3,4])
+
 
 maxPlayTime = 0
 
@@ -45,6 +47,18 @@ thread2stop = threading.Event()
     
 queuePlayEvent = threading.Event()
 
+
+
+   
+
+
+def volumeFadeOut():
+    
+    curVolume = player.audio_get_volume()
+    while curVolume > 0:
+        curVolume = curVolume - 10
+        player.audio_set_volume(curVolume)
+        time.sleep(0.05)
 
 
 
@@ -119,6 +133,8 @@ def stopAllAudio():
     
     audioQueueClear()
     
+    volumeFadeOut()
+    
     player.stop()
 
 
@@ -140,6 +156,7 @@ def audioQueuePlayNext():
     else:
         logging.info('Skipping current media from queue')
         
+        volumeFadeOut()
         player.stop()
     
 
@@ -199,7 +216,6 @@ def playQueue():
 def execQueueListToPlay():
     global playerBusy
 
-    playing = set([1,2,3,4])
     #playing = set([State.PAUSED, State.PLAYING, State.STOPPED])
 
     while True:
@@ -316,6 +332,7 @@ def startAudioThread():
      
         thread2 = threading.Thread(target=threadPlayMaxTime, args=())
         thread2.start()
+        
         
     except KeyboardInterrupt:
         pass
